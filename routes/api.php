@@ -15,6 +15,6 @@ Route::post('login', [UserController::class,'login']);
 //Rutas protegidas con token
 Route::middleware('auth:sanctum')->group(function(){
 Route::post('logout', [UserController::class,'logout']);
-
+Route::post('refresh-token', [UserController::class, 'refreshToken']);
 
 });

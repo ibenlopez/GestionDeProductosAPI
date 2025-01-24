@@ -42,41 +42,65 @@ class UserController extends Controller
             ], 400);
         }
     }
+
+    
  //Logueo de Usuario
-    public function login(Request $request){
+ public function login(Request $request)
+ {
+     try {
+         // Validación de las credenciales
+         $request->validate([
+             'email' => 'required|string|email',
+             'password' => 'required|string|min:8'
+         ]);
+ 
+         // Extraer las credenciales del request
+         $credentials = $request->only('email', 'password');
+ 
+         // Intentar iniciar sesión
+         if (!Auth::attempt($credentials)) {
+             throw new Exception('Invalid credentials');
+         }
+ 
+         // Obtener el usuario autenticado
+         $user = $request->user();
+ 
+         // Crear el token con Sanctum
+         $token = $user->createToken('auth_token')->plainTextToken;
+ 
+         // Obtener la duración del token desde la configuración de Sanctum y convertimos a segundos
+         $tokenExpiration = config('sanctum.expiration') * 60; 
+ 
+         return response()->json([
+             'message' => 'User logged successfully',
+             'user' => $user,
+             'token' => $token,
+             'token_type' => 'Bearer',
+             'expires_in' => $tokenExpiration, // Duración de la sesion en segundos
+         ]);
+     } catch (Exception $error) {
+         return response()->json([
+             'error' => $error->getMessage()
+         ], 400);
+     }
+ }
 
+    // Método para renovar el token
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
 
+        // Elimina todos los tokens actuales del usuario
+        $user->tokens()->delete();
 
-        try {
-            $request->validate([
-                'email' => 'required|string|email',
-                'password' => 'required|string|min:8'
-            ]);
-            //Extrahemos las credenciales del request
-            $credentials = $request->only('email','password');
+        // Crea un nuevo token
+        $newToken = $user->createToken('auth_token')->plainTextToken;
 
-            if (!Auth::attempt($credentials)) {
-
-               throw new Exception('Invalid credentials');
-            }
-
-            $user = $request->user();
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'message' => 'User logged successfully',
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer'
-            ]);
-                
-            
-        } catch (Exception $error) {
-            return response()->json([
-                'error' => $error->getMessage()
-            ], 400);
-        }
+        return response()->json([
+            'access_token' => $newToken,
+            'token_type' => 'Bearer',
+            'expires_in' => config('sanctum.expiration') * 60 // Devuelve la expiración  de la sesion en segundos
+        ]);
     }
 
     //Cierre de sesion del Usuario
