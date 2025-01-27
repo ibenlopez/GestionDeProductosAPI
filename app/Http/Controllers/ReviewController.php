@@ -19,7 +19,7 @@ class ReviewController extends Controller
 
             return response()->json([
                 'message' => 'Test',
-                'data' =>  Review::where('id_product', $product_id)->get(),
+                'data' =>  Review::where('id_product', $id_product)->get(),
                     ], 201);
             
         } catch (Exception $error) {
