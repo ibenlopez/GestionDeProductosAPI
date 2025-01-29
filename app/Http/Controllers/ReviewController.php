@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\Hash;
 
 class ReviewController extends Controller
 {
-    
+    //Metodo que obtiene todas las reseñas de un producto especifico
     public function list(Request $request, $id_product){
 
         try {
 
             return response()->json([
-                'message' => 'Test',
+                'message' => 'All reviews selected',
                 'data' =>  Review::where('id_product', $id_product)->get(),
-                    ], 201);
+                    ], 200);
             
         } catch (Exception $error) {
             return response()->json([
@@ -29,6 +29,7 @@ class ReviewController extends Controller
         }
     }
 
+    //Metodo para crear reseñas en un producto
     public function store(Request $request, $id) {
         $validatedData = $request->validate([
             'rating' => 'required|numeric|min:1|max:5',
@@ -45,12 +46,15 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Review created'], 201);
     }
 
+    //Metodo para eliminar una reseña
     public function destroy($id) {
         $review = Review::findOrFail($id);
 
         $review->delete();
 
-        return response()->json([], 204);
+        return response()->json([
+            'Message' => 'Review deleted successfully'
+        ], 204);
     }
 
 }

@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Hash;
 class ProductController extends Controller
 {
     
-    public function list(Request $request){
+    //Mostrar los productos existentes
+    public function list(){
 
         try {
 
@@ -29,7 +30,8 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Request $request, $id){
+    //Mostrar un producto especifico
+    public function show($id){
 
         $product = Product::find($id);
 
@@ -49,6 +51,7 @@ class ProductController extends Controller
         }
     }
 
+    //Metodo que permite crear un nuevo producto
     public function store(Request $request) {
         $validatedData = $request->validate([
             'name' => 'required|string|max:250',
@@ -61,6 +64,7 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product created', 'product' => $product], 201);
     }
 
+    //Metodo para actualizar informacion del producto especifico
     public function update(Request $request, $id) {
         $product = Product::findOrFail($id);
 
@@ -75,12 +79,15 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product updated', 'product' => $product], 200);
     }
 
+    //Metodo para eliminar a un producto especifico
     public function destroy($id) {
         $product = Product::findOrFail($id);
 
         $product->delete();
 
-        return response()->json([], 204);
+        return response()->json([
+            'Message' => 'Product deleted Successfully'
+        ], 204);
     }
 
 }
