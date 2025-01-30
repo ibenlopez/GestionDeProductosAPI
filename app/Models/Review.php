@@ -11,7 +11,7 @@ class Review extends Model
 {
     protected $table = 'reviews';
 
-    protected $fillable = ['rating', 'comment', 'id_product'];
+    protected $fillable = ['username', 'rating', 'comment', 'id_product'];
 
     protected $guarded = ['id'];
 

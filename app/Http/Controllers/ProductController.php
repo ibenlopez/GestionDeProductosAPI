@@ -10,12 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Storage;
+
 class ProductController extends Controller
 {
     
     //Mostrar los productos existentes
     public function list(){
-
         try {
 
             return response()->json([
@@ -57,9 +58,20 @@ class ProductController extends Controller
             'name' => 'required|string|max:250',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+            'img' => 'nullable|file'
         ]);
 
-        $product = Product::create($validatedData);
+        $path = null;
+        if($request->hasFile('img')){
+            $path = $request->file('img')->store('uploads', 'public');
+        }
+
+        $product = Product::create([
+            'name' => $validatedData['name'],
+            'price' => $validatedData['price'],
+            'description' => $validatedData['description'],
+            'img' => $path != null ? $path : null
+        ]);
 
         return response()->json(['message' => 'Product created', 'product' => $product], 201);
     }
@@ -67,14 +79,29 @@ class ProductController extends Controller
     //Metodo para actualizar informacion del producto especifico
     public function update(Request $request, $id) {
         $product = Product::findOrFail($id);
-
+        
         $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:250',
             'price' => 'sometimes|required|numeric|min:0',
             'description' => 'nullable|string',
+            'img' => 'nullable|file'
         ]);
 
-        $product->update($validatedData);
+        $path = null;
+        if($request->hasFile('img')) {
+            $path = $request->file('img')->store('uploads', 'public');
+        }
+
+        if($path != null && $product->img != null && !empty($product->img) && file_exists(storage_path('app/public/' . $product->img))) {
+            unlink(storage_path('app/public/' . $product->img));
+        }
+
+        $product->update([
+            'name' => $validatedData['name'],
+            'price' => $validatedData['price'],
+            'description' => $validatedData['description'],
+            'img' => $path != null ? $path : null
+        ]);
 
         return response()->json(['message' => 'Product updated', 'product' => $product], 200);
     }
@@ -82,6 +109,10 @@ class ProductController extends Controller
     //Metodo para eliminar a un producto especifico
     public function destroy($id) {
         $product = Product::findOrFail($id);
+
+        if($product->img != null && !empty($product->img) && file_exists(storage_path('app/public/' . $product->img))){
+            unlink(storage_path('app/public/' . $product->img));
+        }
 
         $product->delete();
 

@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/products', [ProductController::class,'list']);                 //Ruta que lista todos los productos existentes
     Route::post('/products', [ProductController::class,'store']);               //Ruta que permite almacenar productos
     Route::get('/products/{id}', [ProductController::class,'show']);            //Ruta que obtiene un producto bajo su ID
-    Route::put('/products/{id}', [ProductController::class,'update']);          //Ruta para actualizar un producto
+    Route::post('/products/{id}', [ProductController::class,'update']);          //Ruta para actualizar un producto
     Route::delete('/products/{id}', [ProductController::class,'destroy']);      //Ruta para eliminar un producto
 
     Route::get('/products/{id}/reviews', [ReviewController::class,'list']);     //Ruta para ver las reseñas de un producto

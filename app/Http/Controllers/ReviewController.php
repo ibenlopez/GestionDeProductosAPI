@@ -14,7 +14,6 @@ class ReviewController extends Controller
 {
     //Metodo que obtiene todas las reseñas de un producto especifico
     public function list(Request $request, $id_product){
-
         try {
 
             return response()->json([
@@ -41,6 +40,7 @@ class ReviewController extends Controller
         $product->reviews()->create([
             'comment' => $validatedData['comment'],
             'rating' => $validatedData['rating'],
+            'username' => $request->user()->name
         ]);
 
         return response()->json(['message' => 'Review created'], 201);
