@@ -100,7 +100,7 @@ class ProductController extends Controller
             'name' => $validatedData['name'],
             'price' => $validatedData['price'],
             'description' => $validatedData['description'],
-            'img' => $path != null ? $path : null
+            'img' => $path != null ? $path : $product->img
         ]);
 
         return response()->json(['message' => 'Product updated', 'product' => $product], 200);

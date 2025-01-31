@@ -1,0 +1,8 @@
+Al descargar ejecutar:
+
+composer installer
+
+user de prueba: admin@gmail.com
+pass: 12345678
+
+Los nuevos usuarios requieren un password de 8 caracteres
