@@ -24,7 +24,7 @@ class AuthController extends Controller
         }
 
         //Genera una regeneracion del Token de acceso cada despues de 5 min de haberse generado 
-        $expires = now()->addMinutes(120);
+        $expires = now()->addMinutes(5);
 
         //Se obtiene al usuario que ha sido autenticado
         $user = Auth::user();      
